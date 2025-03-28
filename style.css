@@ -274,6 +274,153 @@ body {
   box-shadow: var(--shadow);
 }
 
+/* 管理链接 */
+.admin-link {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  font-size: 0.8rem;
+  color: #ddd;
+  text-decoration: none;
+  opacity: 0.6;
+}
+
+.admin-link:hover {
+  opacity: 1;
+}
+
+/* 统计页面样式 */
+.stats-container {
+  padding: 30px;
+  text-align: center;
+}
+
+.stats-card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+.stats-header {
+  margin-bottom: 30px;
+}
+
+.stats-title {
+  color: var(--primary-dark);
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.stats-item {
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: var(--primary-light);
+  border-radius: 10px;
+  align-items: center;
+}
+
+.stats-label {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.stats-value {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: var(--primary-dark);
+}
+
+.stats-percentage {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 5px;
+}
+
+.refresh-btn, .reset-btn {
+  margin-top: 20px;
+  margin-right: 10px;
+}
+
+.reset-btn {
+  background-color: #f0f0f0;
+  color: #666;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.reset-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.back-to-test {
+  margin-top: 30px;
+  text-decoration: none;
+  color: var(--primary-dark);
+  display: inline-block;
+}
+
+.back-to-test:hover {
+  text-decoration: underline;
+}
+
+.message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.visit-log {
+  margin-top: 30px;
+  text-align: left;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.log-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: var(--primary-dark);
+}
+
+.log-entry {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  padding: 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.visit {
+  color: #666;
+}
+
+.complete {
+  color: var(--primary-dark);
+  font-weight: 500;
+}
+
 /* 动画效果 */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }

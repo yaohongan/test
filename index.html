@@ -18,7 +18,52 @@
     .admin-link:hover {
       opacity: 1;
     }
+    
+    .visitor-stats {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.8rem;
+      color: #999;
+      opacity: 0.8;
+    }
   </style>
+  <script>
+    // 统计功能
+    document.addEventListener('DOMContentLoaded', function() {
+      // 记录测试访问量，如果在本次会话中未记录过
+      if (!sessionStorage.getItem('testRecorded')) {
+        const totalTests = parseInt(localStorage.getItem('totalTests') || 0) + 1;
+        localStorage.setItem('totalTests', totalTests);
+        sessionStorage.setItem('testRecorded', 'true');
+        
+        // 记录访问记录
+        const visits = JSON.parse(localStorage.getItem('visits') || '[]');
+        visits.push({
+          type: 'visit',
+          time: new Date().toISOString()
+        });
+        localStorage.setItem('visits', JSON.stringify(visits));
+      }
+    });
+    
+    // 记录完成统计
+    function recordCompletion() {
+      if (!sessionStorage.getItem('testCompleted')) {
+        const completedTests = parseInt(localStorage.getItem('completedTests') || 0) + 1;
+        localStorage.setItem('completedTests', completedTests);
+        sessionStorage.setItem('testCompleted', 'true');
+        
+        // 记录完成记录
+        const completions = JSON.parse(localStorage.getItem('completions') || '[]');
+        completions.push({
+          type: 'complete',
+          time: new Date().toISOString()
+        });
+        localStorage.setItem('completions', JSON.stringify(completions));
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="container">
@@ -82,6 +127,12 @@
   <!-- 管理入口 -->
   <a href="stats.html" class="admin-link">管理</a>
   
+  <!-- 访客统计 -->
+  <div class="visitor-stats">
+    本页访问人次:<span id="page_pv"></span> 本页访问人数:<span id="page_uv"></span>
+  </div>
+  
   <script src="script.js"></script>
+  <script async src="//webviso.yestool.org/js/index.min.js"></script>
 </body>
 </html> 
