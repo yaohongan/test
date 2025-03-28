@@ -37,6 +37,7 @@
       padding: 15px;
       background-color: var(--primary-light);
       border-radius: 10px;
+      align-items: center;
     }
     
     .stats-label {
@@ -50,14 +51,24 @@
       color: var(--primary-dark);
     }
     
+    .input-field {
+      width: 80px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+    
     .stats-percentage {
       font-size: 0.9rem;
       color: #555;
       margin-top: 5px;
     }
     
-    .refresh-btn {
+    .refresh-btn, .save-btn {
       margin-top: 20px;
+      margin-right: 10px;
     }
     
     .reset-btn {
@@ -85,6 +96,23 @@
     .back-to-test:hover {
       text-decoration: underline;
     }
+    
+    .message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+    }
+    
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
   </style>
 </head>
 <body>
@@ -96,26 +124,30 @@
       </div>
       
       <div class="stats-content">
-        <div class="stats-item">
-          <span class="stats-label">总测试人数</span>
-          <span class="stats-value" id="total-tests">0</span>
-        </div>
-        
-        <div class="stats-item">
-          <span class="stats-label">完成测试人数</span>
-          <span class="stats-value" id="completed-tests">0</span>
-        </div>
-        
-        <div class="stats-item">
-          <span class="stats-label">完成率</span>
-          <div>
-            <span class="stats-value" id="completion-rate">0%</span>
-            <div class="stats-percentage" id="percentage-detail"></div>
+        <form id="stats-form">
+          <div class="stats-item">
+            <span class="stats-label">总测试人数</span>
+            <input type="number" id="total-tests" class="input-field" value="0" min="0">
           </div>
-        </div>
+          
+          <div class="stats-item">
+            <span class="stats-label">完成测试人数</span>
+            <input type="number" id="completed-tests" class="input-field" value="0" min="0">
+          </div>
+          
+          <div class="stats-item">
+            <span class="stats-label">完成率</span>
+            <div>
+              <span class="stats-value" id="completion-rate">0%</span>
+              <div class="stats-percentage" id="percentage-detail"></div>
+            </div>
+          </div>
+          
+          <button type="button" class="btn save-btn" id="save-btn">保存统计</button>
+          <button type="button" class="reset-btn" id="reset-btn">重置数据</button>
+        </form>
         
-        <button class="btn refresh-btn" id="refresh-btn">刷新数据</button>
-        <button class="reset-btn" id="reset-btn">重置计数器</button>
+        <div id="message" class="message"></div>
       </div>
       
       <a href="index.html" class="back-to-test">返回测试页面</a>
@@ -124,62 +156,103 @@
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      updateStatsDisplay();
+      // 加载初始数据
+      loadStats();
       
-      // 刷新按钮点击事件
-      document.getElementById('refresh-btn').addEventListener('click', updateStatsDisplay);
+      // 表单输入变化时更新完成率
+      document.getElementById('total-tests').addEventListener('input', updateCompletionRate);
+      document.getElementById('completed-tests').addEventListener('input', updateCompletionRate);
       
-      // 重置计数器按钮点击事件
-      document.getElementById('reset-btn').addEventListener('click', resetCounters);
+      // 保存按钮点击事件
+      document.getElementById('save-btn').addEventListener('click', saveStats);
+      
+      // 重置按钮点击事件
+      document.getElementById('reset-btn').addEventListener('click', resetStats);
     });
     
-    function updateStatsDisplay() {
+    // 加载统计数据
+    function loadStats() {
       try {
-        // 只从localStorage获取数据
-        let totalTests = parseInt(localStorage.getItem('totalTests') || 0);
-        let completedTests = parseInt(localStorage.getItem('completedTests') || 0);
+        const totalTests = parseInt(localStorage.getItem('totalTests') || 0);
+        const completedTests = parseInt(localStorage.getItem('completedTests') || 0);
         
-        // 计算完成率
-        const completionRate = totalTests > 0 ? (completedTests / totalTests * 100).toFixed(1) : 0;
+        document.getElementById('total-tests').value = totalTests;
+        document.getElementById('completed-tests').value = completedTests;
         
-        // 更新显示
-        document.getElementById('total-tests').textContent = totalTests;
-        document.getElementById('completed-tests').textContent = completedTests;
-        document.getElementById('completion-rate').textContent = completionRate + '%';
-        document.getElementById('percentage-detail').textContent = `${completedTests} / ${totalTests}`;
-        
-        // 添加动画效果
-        animateCounters();
+        updateCompletionRate();
       } catch (e) {
-        console.error('更新统计显示错误', e);
+        console.error('加载统计数据错误', e);
+        showMessage('加载数据失败，请重试', 'error');
       }
     }
     
-    function resetCounters() {
-      if (confirm('确定要重置所有计数器吗？这将清除所有统计数据。')) {
+    // 更新完成率显示
+    function updateCompletionRate() {
+      try {
+        const totalTests = parseInt(document.getElementById('total-tests').value) || 0;
+        const completedTests = parseInt(document.getElementById('completed-tests').value) || 0;
+        
+        const completionRate = totalTests > 0 ? (completedTests / totalTests * 100).toFixed(1) : 0;
+        
+        document.getElementById('completion-rate').textContent = completionRate + '%';
+        document.getElementById('percentage-detail').textContent = `${completedTests} / ${totalTests}`;
+      } catch (e) {
+        console.error('更新完成率错误', e);
+      }
+    }
+    
+    // 保存统计数据
+    function saveStats() {
+      try {
+        const totalTests = parseInt(document.getElementById('total-tests').value) || 0;
+        const completedTests = parseInt(document.getElementById('completed-tests').value) || 0;
+        
+        // 验证数据
+        if (completedTests > totalTests) {
+          showMessage('完成人数不能大于总人数', 'error');
+          return;
+        }
+        
+        localStorage.setItem('totalTests', totalTests);
+        localStorage.setItem('completedTests', completedTests);
+        
+        showMessage('统计数据已保存', 'success');
+      } catch (e) {
+        console.error('保存统计数据错误', e);
+        showMessage('保存失败，请重试', 'error');
+      }
+    }
+    
+    // 重置统计数据
+    function resetStats() {
+      if (confirm('确定要重置所有统计数据吗？')) {
         try {
+          document.getElementById('total-tests').value = 0;
+          document.getElementById('completed-tests').value = 0;
+          
           localStorage.setItem('totalTests', 0);
           localStorage.setItem('completedTests', 0);
           sessionStorage.removeItem('testRecorded');
           
-          // 刷新显示
-          updateStatsDisplay();
+          updateCompletionRate();
+          showMessage('统计数据已重置', 'success');
         } catch (e) {
-          console.error('重置计数器错误', e);
+          console.error('重置统计数据错误', e);
+          showMessage('重置失败，请重试', 'error');
         }
       }
     }
     
-    function animateCounters() {
-      const counters = document.querySelectorAll('.stats-value');
-      counters.forEach(counter => {
-        counter.style.transition = 'all 0.5s ease-out';
-        counter.style.opacity = 0;
-        
-        setTimeout(() => {
-          counter.style.opacity = 1;
-        }, 100);
-      });
+    // 显示消息
+    function showMessage(text, type) {
+      const messageElement = document.getElementById('message');
+      messageElement.textContent = text;
+      messageElement.className = 'message ' + type;
+      messageElement.style.display = 'block';
+      
+      setTimeout(() => {
+        messageElement.style.display = 'none';
+      }, 3000);
     }
   </script>
 </body>
