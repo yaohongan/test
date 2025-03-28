@@ -1,0 +1,21 @@
+{
+  "name": "love-test",
+  "version": "1.0.0",
+  "description": "恋爱指南 - 10秒测出你的真爱类型",
+  "main": "index.html",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "love",
+    "test",
+    "quiz",
+    "relationship"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.x"
+  }
+} 

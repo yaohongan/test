@@ -80,26 +80,7 @@
   </div>
   
   <!-- 管理入口 -->
-  <a href="stats.html" id="admin-link" class="admin-link">管理</a>
-  
-  <script>
-    // 在加载主脚本前处理URL参数和管理链接
-    document.addEventListener('DOMContentLoaded', function() {
-      // 获取URL参数
-      const urlParams = new URLSearchParams(window.location.search);
-      const totalTests = urlParams.get('total');
-      const completedTests = urlParams.get('completed');
-      
-      // 更新管理链接，保留统计数据
-      if (totalTests && completedTests) {
-        const adminLink = document.getElementById('admin-link');
-        const statsUrl = new URL('stats.html', window.location.href);
-        statsUrl.searchParams.set('total', totalTests);
-        statsUrl.searchParams.set('completed', completedTests);
-        adminLink.href = statsUrl.toString();
-      }
-    });
-  </script>
+  <a href="stats.html" class="admin-link">管理</a>
   
   <script src="script.js"></script>
 </body>
