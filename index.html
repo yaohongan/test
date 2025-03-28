@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>恋爱指南 | 10秒测出你的真爱类型</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="quiz-header">
+      <h1>恋爱指南</h1>
+      <p class="subtitle">10秒测出你的真爱类型！</p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <p class="question-counter"><span id="current-question">1</span>/10</p>
+    </div>
+    
+    <div class="quiz-content" id="quiz-container">
+      <!-- 测试说明 -->
+      <div class="intro-screen" id="intro-screen">
+        <div class="intro-content">
+          <h2>测试说明</h2>
+          <ul>
+            <li>共10道题，每题选最符合你真实想法的选项</li>
+            <li>记录你的选项（A=1分，B=2分，C=3分，D=4分），最后计算总分</li>
+            <li>不要想太多，凭第一感觉选！</li>
+          </ul>
+          <button class="btn start-btn" id="start-btn">开始测试</button>
+        </div>
+      </div>
+      
+      <!-- 问题将动态加载 -->
+      <div class="question-screen" id="question-screen" style="display: none;">
+        <div class="question-content">
+          <h2 id="question-title"></h2>
+          <div class="options" id="options-container">
+            <!-- 选项将动态加载 -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- 结果页 -->
+      <div class="result-screen" id="result-screen" style="display: none;">
+        <div class="result-content">
+          <h2>测试完成！</h2>
+          <p class="score">你的得分是：<span id="final-score">0</span></p>
+          <p class="result-tag">请扫码联系获取测试结果解读！</p>
+          <button class="btn result-btn" id="result-btn">查看解读</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 弹窗 -->
+  <div class="modal" id="result-modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-modal">&times;</span>
+      <h2>恋爱指南详细解读</h2>
+      <div class="wx-image-container">
+        <p class="contact-text">扫描下方二维码，获取专业解读！</p>
+        <img src="wx.jpg" alt="联系方式" class="wx-image">
+      </div>
+    </div>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+</html> 
