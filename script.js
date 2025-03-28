@@ -42,7 +42,7 @@ const questions = [
   },
   {
     id: 5,
-    title: "你对\"个人空间\"的看法是？",
+    title: "你对个人空间的看法是？",
     options: [
       { label: "A", text: "非常重要！再爱也需要独处时间", value: 1 },
       { label: "B", text: "偶尔需要，但更喜欢分享生活", value: 2 },
@@ -157,16 +157,50 @@ let currentQuestionIndex = 0;
 let score = 0;
 let userAnswers = [];
 
+// 统计人数函数
+function updateStatistics() {
+  // 获取当前统计数据
+  let totalTests = localStorage.getItem('totalTests') || 0;
+  let completedTests = localStorage.getItem('completedTests') || 0;
+  
+  // 是否已记录过当前会话
+  const sessionRecorded = sessionStorage.getItem('testRecorded');
+  
+  // 如果会话未记录，更新总测试人数
+  if (!sessionRecorded) {
+    totalTests = parseInt(totalTests) + 1;
+    localStorage.setItem('totalTests', totalTests);
+    sessionStorage.setItem('testRecorded', 'true');
+  }
+  
+  return { totalTests, completedTests };
+}
+
+// 更新完成测试人数
+function updateCompletedTests() {
+  let completedTests = localStorage.getItem('completedTests') || 0;
+  completedTests = parseInt(completedTests) + 1;
+  localStorage.setItem('completedTests', completedTests);
+}
+
 // 初始化
 startBtn.addEventListener('click', startQuiz);
 resultBtn.addEventListener('click', showResultModal);
 closeModal.addEventListener('click', closeResultModal);
+
+// 加载时更新统计
+document.addEventListener('DOMContentLoaded', function() {
+  updateStatistics();
+});
 
 // 开始测试
 function startQuiz() {
   introScreen.style.display = 'none';
   questionScreen.style.display = 'block';
   showQuestion(currentQuestionIndex);
+  
+  // 更新统计数据
+  updateStatistics();
 }
 
 // 显示当前问题
@@ -230,6 +264,9 @@ function showResult() {
   questionScreen.style.display = 'none';
   resultScreen.style.display = 'block';
   finalScoreElem.textContent = score;
+  
+  // 更新完成测试的人数
+  updateCompletedTests();
 }
 
 // 显示结果弹窗

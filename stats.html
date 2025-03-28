@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>恋爱指南 | 测试统计</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .stats-container {
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .stats-card {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin: 20px auto;
+      max-width: 500px;
+    }
+    
+    .stats-header {
+      margin-bottom: 30px;
+    }
+    
+    .stats-title {
+      color: var(--primary-dark);
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+    
+    .stats-item {
+      margin: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+      background-color: var(--primary-light);
+      border-radius: 10px;
+    }
+    
+    .stats-label {
+      font-weight: 500;
+      color: var(--text-color);
+    }
+    
+    .stats-value {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--primary-dark);
+    }
+    
+    .stats-percentage {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 5px;
+    }
+    
+    .refresh-btn {
+      margin-top: 20px;
+    }
+    
+    .back-to-test {
+      margin-top: 30px;
+      text-decoration: none;
+      color: var(--primary-dark);
+      display: inline-block;
+    }
+    
+    .back-to-test:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="stats-container">
+    <div class="stats-card">
+      <div class="stats-header">
+        <h1 class="stats-title">测试统计数据</h1>
+        <p>了解有多少人参与了"恋爱指南"测试</p>
+      </div>
+      
+      <div class="stats-content">
+        <div class="stats-item">
+          <span class="stats-label">总测试人数</span>
+          <span class="stats-value" id="total-tests">0</span>
+        </div>
+        
+        <div class="stats-item">
+          <span class="stats-label">完成测试人数</span>
+          <span class="stats-value" id="completed-tests">0</span>
+        </div>
+        
+        <div class="stats-item">
+          <span class="stats-label">完成率</span>
+          <div>
+            <span class="stats-value" id="completion-rate">0%</span>
+            <div class="stats-percentage" id="percentage-detail"></div>
+          </div>
+        </div>
+        
+        <button class="btn refresh-btn" id="refresh-btn">刷新数据</button>
+      </div>
+      
+      <a href="index.html" class="back-to-test">返回测试页面</a>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      updateStatsDisplay();
+      
+      // 刷新按钮点击事件
+      document.getElementById('refresh-btn').addEventListener('click', updateStatsDisplay);
+    });
+    
+    function updateStatsDisplay() {
+      // 获取统计数据
+      const totalTests = localStorage.getItem('totalTests') || 0;
+      const completedTests = localStorage.getItem('completedTests') || 0;
+      
+      // 计算完成率
+      const completionRate = totalTests > 0 ? (completedTests / totalTests * 100).toFixed(1) : 0;
+      
+      // 更新显示
+      document.getElementById('total-tests').textContent = totalTests;
+      document.getElementById('completed-tests').textContent = completedTests;
+      document.getElementById('completion-rate').textContent = completionRate + '%';
+      document.getElementById('percentage-detail').textContent = `${completedTests} / ${totalTests}`;
+      
+      // 添加动画效果
+      animateCounters();
+    }
+    
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stats-value');
+      counters.forEach(counter => {
+        counter.style.transition = 'all 0.5s ease-out';
+        counter.style.opacity = 0;
+        
+        setTimeout(() => {
+          counter.style.opacity = 1;
+        }, 100);
+      });
+    }
+  </script>
+</body>
+</html> 
