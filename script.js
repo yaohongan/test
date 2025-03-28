@@ -159,18 +159,29 @@ let userAnswers = [];
 
 // 统计人数函数
 function updateStatistics() {
-  // 获取当前统计数据
-  let totalTests = localStorage.getItem('totalTests') || 0;
-  let completedTests = localStorage.getItem('completedTests') || 0;
+  // 检查URL是否包含计数参数
+  const urlParams = new URLSearchParams(window.location.search);
+  let totalTests = parseInt(urlParams.get('total') || localStorage.getItem('totalTests') || 0);
+  let completedTests = parseInt(urlParams.get('completed') || localStorage.getItem('completedTests') || 0);
   
   // 是否已记录过当前会话
   const sessionRecorded = sessionStorage.getItem('testRecorded');
   
   // 如果会话未记录，更新总测试人数
   if (!sessionRecorded) {
-    totalTests = parseInt(totalTests) + 1;
+    totalTests += 1;
     localStorage.setItem('totalTests', totalTests);
     sessionStorage.setItem('testRecorded', 'true');
+    
+    // 将新的计数添加到URL中，不刷新页面
+    try {
+      const shareUrl = new URL(window.location.href);
+      shareUrl.searchParams.set('total', totalTests);
+      shareUrl.searchParams.set('completed', completedTests);
+      history.replaceState({}, '', shareUrl);
+    } catch (e) {
+      console.error('无法更新URL参数', e);
+    }
   }
   
   return { totalTests, completedTests };
@@ -178,9 +189,25 @@ function updateStatistics() {
 
 // 更新完成测试人数
 function updateCompletedTests() {
-  let completedTests = localStorage.getItem('completedTests') || 0;
-  completedTests = parseInt(completedTests) + 1;
+  // 检查URL是否包含计数参数
+  const urlParams = new URLSearchParams(window.location.search);
+  let totalTests = parseInt(urlParams.get('total') || localStorage.getItem('totalTests') || 0);
+  let completedTests = parseInt(urlParams.get('completed') || localStorage.getItem('completedTests') || 0);
+  
+  completedTests += 1;
   localStorage.setItem('completedTests', completedTests);
+  
+  // 将新的计数添加到URL中，不刷新页面
+  try {
+    const shareUrl = new URL(window.location.href);
+    shareUrl.searchParams.set('total', totalTests);
+    shareUrl.searchParams.set('completed', completedTests);
+    history.replaceState({}, '', shareUrl);
+  } catch (e) {
+    console.error('无法更新URL参数', e);
+  }
+  
+  return { totalTests, completedTests };
 }
 
 // 初始化

@@ -60,6 +60,45 @@
       margin-top: 20px;
     }
     
+    .share-section {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: var(--primary-light);
+      border-radius: 10px;
+    }
+    
+    .share-title {
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: var(--primary-dark);
+    }
+    
+    .share-url {
+      padding: 10px;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      color: #666;
+      word-break: break-all;
+      margin-bottom: 15px;
+    }
+    
+    .copy-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    
+    .copy-btn:hover {
+      background-color: var(--primary-dark);
+    }
+    
     .back-to-test {
       margin-top: 30px;
       text-decoration: none;
@@ -69,6 +108,21 @@
     
     .back-to-test:hover {
       text-decoration: underline;
+    }
+    
+    .reset-btn {
+      margin-top: 10px;
+      background-color: #f0f0f0;
+      color: #666;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    
+    .reset-btn:hover {
+      background-color: #e0e0e0;
     }
   </style>
 </head>
@@ -102,6 +156,16 @@
         <button class="btn refresh-btn" id="refresh-btn">刷新数据</button>
       </div>
       
+      <div class="share-section">
+        <h3 class="share-title">分享此统计页面</h3>
+        <p>复制下面的链接将保留当前统计数据：</p>
+        <div class="share-url" id="share-url"></div>
+        <button class="copy-btn" id="copy-btn">复制链接</button>
+        <div style="margin-top: 15px;">
+          <button class="reset-btn" id="reset-btn">重置计数器</button>
+        </div>
+      </div>
+      
       <a href="index.html" class="back-to-test">返回测试页面</a>
     </div>
   </div>
@@ -112,12 +176,26 @@
       
       // 刷新按钮点击事件
       document.getElementById('refresh-btn').addEventListener('click', updateStatsDisplay);
+      
+      // 复制链接按钮点击事件
+      document.getElementById('copy-btn').addEventListener('click', copyShareUrl);
+      
+      // 重置计数器按钮点击事件
+      document.getElementById('reset-btn').addEventListener('click', resetCounters);
+      
+      // 生成分享链接
+      generateShareUrl();
     });
     
     function updateStatsDisplay() {
-      // 获取统计数据
-      const totalTests = localStorage.getItem('totalTests') || 0;
-      const completedTests = localStorage.getItem('completedTests') || 0;
+      // 从URL参数获取统计数据
+      const urlParams = new URLSearchParams(window.location.search);
+      let totalTests = parseInt(urlParams.get('total') || localStorage.getItem('totalTests') || 0);
+      let completedTests = parseInt(urlParams.get('completed') || localStorage.getItem('completedTests') || 0);
+      
+      // 保存到本地存储，确保数据一致性
+      localStorage.setItem('totalTests', totalTests);
+      localStorage.setItem('completedTests', completedTests);
       
       // 计算完成率
       const completionRate = totalTests > 0 ? (completedTests / totalTests * 100).toFixed(1) : 0;
@@ -128,8 +206,62 @@
       document.getElementById('completion-rate').textContent = completionRate + '%';
       document.getElementById('percentage-detail').textContent = `${completedTests} / ${totalTests}`;
       
+      // 生成分享链接
+      generateShareUrl();
+      
       // 添加动画效果
       animateCounters();
+    }
+    
+    function generateShareUrl() {
+      const totalTests = localStorage.getItem('totalTests') || 0;
+      const completedTests = localStorage.getItem('completedTests') || 0;
+      
+      // 创建分享URL
+      const currentUrl = new URL(window.location.href);
+      
+      // 移除现有参数
+      currentUrl.search = '';
+      
+      // 添加统计参数
+      currentUrl.searchParams.set('total', totalTests);
+      currentUrl.searchParams.set('completed', completedTests);
+      
+      // 显示分享链接
+      document.getElementById('share-url').textContent = currentUrl.toString();
+      
+      // 更新当前URL
+      history.replaceState({}, '', currentUrl);
+    }
+    
+    function copyShareUrl() {
+      const shareUrlText = document.getElementById('share-url').textContent;
+      navigator.clipboard.writeText(shareUrlText).then(() => {
+        const copyBtn = document.getElementById('copy-btn');
+        copyBtn.textContent = '已复制!';
+        setTimeout(() => {
+          copyBtn.textContent = '复制链接';
+        }, 2000);
+      }).catch(err => {
+        console.error('无法复制链接: ', err);
+        alert('复制失败，请手动复制链接');
+      });
+    }
+    
+    function resetCounters() {
+      if (confirm('确定要重置所有计数器吗？这将清除所有统计数据。')) {
+        localStorage.setItem('totalTests', 0);
+        localStorage.setItem('completedTests', 0);
+        sessionStorage.removeItem('testRecorded');
+        
+        // 更新URL
+        const currentUrl = new URL(window.location.href);
+        currentUrl.search = '';
+        history.replaceState({}, '', currentUrl);
+        
+        // 刷新显示
+        updateStatsDisplay();
+      }
     }
     
     function animateCounters() {
